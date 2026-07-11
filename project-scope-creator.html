@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Scope Creator | IncomeAIHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cyan:#00fff2;
+    --purple:#b026ff;
+    --green:#39ff88;
+    --bg0:#05060a;
+    --bg1:#0a0d16;
+    --bg2:#10141f;
+    --panel:#0d1119;
+    --border:rgba(0,255,242,0.25);
+    --text:#d6e6ff;
+    --muted:#7f8aa3;
+    --danger:#ff3860;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg0);
+    color:var(--text);
+    font-family:'Rajdhani',sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background:
+      linear-gradient(rgba(0,255,242,0.03) 1px, transparent 1px) 0 0/100% 3px,
+      radial-gradient(circle at 20% 10%, rgba(176,38,255,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(0,255,242,0.08), transparent 40%);
+    pointer-events:none;
+    z-index:0;
+    animation:scan 8s linear infinite;
+  }
+  @keyframes scan{0%{background-position:0 0,0 0,0 0;}100%{background-position:0 100px,0 0,0 0;}}
+  h1,h2,h3,.brand,.btn,.tab{font-family:'Orbitron',sans-serif;}
+  .mono{font-family:'Share Tech Mono',monospace;}
+  .wrap{max-width:1300px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+
+  header{
+    text-align:center;padding:26px 16px;margin-bottom:18px;
+    border:1px solid var(--border);border-radius:14px;
+    background:linear-gradient(180deg, rgba(0,255,242,0.06), rgba(176,38,255,0.04));
+    box-shadow:0 0 30px rgba(0,255,242,0.08) inset;
+  }
+  header h1{
+    font-size:clamp(22px,4vw,38px);
+    letter-spacing:2px;
+    background:linear-gradient(90deg,var(--cyan),var(--purple),var(--green));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 30px rgba(0,255,242,0.3);
+  }
+  header p{color:var(--muted);margin-top:8px;font-size:15px;letter-spacing:.5px;}
+
+  .ad-slot{
+    border:1px dashed rgba(127,138,163,0.4);
+    border-radius:10px;
+    text-align:center;
+    color:var(--muted);
+    padding:14px;
+    margin:18px 0;
+    font-family:'Share Tech Mono',monospace;
+    font-size:12px;
+    letter-spacing:1px;
+    background:rgba(255,255,255,0.02);
+  }
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;}
+  @media (max-width:960px){.grid{grid-template-columns:1fr;}}
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    position:relative;
+  }
+  .panel::before{
+    content:"";position:absolute;top:0;left:16px;right:16px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  }
+  .panel h2{
+    font-size:16px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:16px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .panel h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+
+  label{
+    display:block;font-size:13px;color:var(--muted);margin:12px 0 6px;
+    text-transform:uppercase;letter-spacing:1px;font-weight:600;
+  }
+  input[type=text], input[type=date], input[type=number], textarea, select{
+    width:100%;background:var(--bg1);border:1px solid rgba(0,255,242,0.2);
+    color:var(--text);padding:10px 12px;border-radius:8px;font-family:'Rajdhani',sans-serif;
+    font-size:15px;transition:.2s;
+  }
+  input:focus, textarea:focus, select:focus{
+    outline:none;border-color:var(--cyan);box-shadow:0 0 10px rgba(0,255,242,0.25);
+  }
+  textarea{resize:vertical;min-height:70px;}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:500px){.row2{grid-template-columns:1fr;}}
+  .row3{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:end;}
+  @media (max-width:600px){.row3{grid-template-columns:1fr;}}
+
+  .item-card{
+    background:var(--bg1);border:1px solid rgba(176,38,255,0.25);
+    border-radius:10px;padding:12px;margin-top:10px;position:relative;
+  }
+  .item-card .rm{
+    position:absolute;top:8px;right:8px;background:transparent;border:1px solid var(--danger);
+    color:var(--danger);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:14px;
+    display:flex;align-items:center;justify-content:center;transition:.2s;
+  }
+  .item-card .rm:hover{background:var(--danger);color:#000;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 18px;border-radius:8px;border:1px solid var(--cyan);
+    background:transparent;color:var(--cyan);cursor:pointer;font-size:13px;
+    letter-spacing:1px;transition:.2s;font-weight:600;
+  }
+  .btn:hover{background:var(--cyan);color:#000;box-shadow:0 0 16px rgba(0,255,242,0.5);}
+  .btn.purple{border-color:var(--purple);color:var(--purple);}
+  .btn.purple:hover{background:var(--purple);color:#000;box-shadow:0 0 16px rgba(176,38,255,0.5);}
+  .btn.green{border-color:var(--green);color:var(--green);}
+  .btn.green:hover{background:var(--green);color:#000;box-shadow:0 0 16px rgba(57,255,136,0.5);}
+  .btn.small{padding:7px 12px;font-size:11px;}
+  .btn.ghost{border-color:rgba(127,138,163,0.4);color:var(--muted);}
+  .btn.ghost:hover{background:rgba(127,138,163,0.2);color:var(--text);}
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+
+  .preview{
+    background:linear-gradient(180deg,#0c1220,#0a0e18);
+    border:1px solid var(--border);border-radius:14px;padding:24px;
+    max-height:900px;overflow-y:auto;
+  }
+  .preview h3{color:var(--cyan);font-size:20px;margin-bottom:4px;letter-spacing:1px;}
+  .preview .doc-sub{color:var(--muted);font-size:13px;margin-bottom:18px;font-family:'Share Tech Mono',monospace;}
+  .doc-section{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(127,138,163,0.15);}
+  .doc-section h4{color:var(--green);font-size:14px;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
+  .doc-section p, .doc-section li{color:#c6d4ea;font-size:14.5px;}
+  .doc-section ul{padding-left:20px;margin-top:6px;}
+  .doc-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;}
+  .doc-table th,.doc-table td{border:1px solid rgba(127,138,163,0.25);padding:8px;text-align:left;}
+  .doc-table th{background:rgba(0,255,242,0.08);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:12px;}
+  .total-box{
+    background:rgba(57,255,136,0.08);border:1px solid var(--green);border-radius:8px;
+    padding:12px 16px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .total-box .amt{font-family:'Share Tech Mono',monospace;color:var(--green);font-size:20px;}
+
+  .drafts-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .draft-chip{
+    background:var(--bg1);border:1px solid rgba(0,255,242,0.25);border-radius:20px;
+    padding:6px 12px;font-size:12px;color:var(--text);display:flex;gap:8px;align-items:center;
+  }
+  .draft-chip button{background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;}
+  .draft-chip span{cursor:pointer;}
+  .draft-chip span:hover{color:var(--cyan);}
+
+  .hindi-guide{
+    margin-top:20px;background:linear-gradient(135deg, rgba(176,38,255,0.08), rgba(0,255,242,0.05));
+    border:1px solid var(--purple);border-radius:14px;padding:22px;
+  }
+  .hindi-guide h2{color:var(--purple);font-size:18px;margin-bottom:12px;letter-spacing:1px;}
+  .hindi-guide ol{padding-left:22px;}
+  .hindi-guide li{margin-bottom:10px;color:#dcd0f5;font-size:15px;}
+  .hindi-guide b{color:var(--cyan);}
+
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:24px 0;font-family:'Share Tech Mono',monospace;}
+
+  .toast{
+    position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--green);
+    color:var(--green);padding:12px 20px;border-radius:8px;font-family:'Share Tech Mono',monospace;
+    font-size:13px;z-index:999;transform:translateY(20px);opacity:0;transition:.3s;pointer-events:none;
+  }
+  .toast.show{transform:translateY(0);opacity:1;}
+
+  @media print{
+    body::before, header, .ad-slot, .grid > div:first-child, .hindi-guide, footer, .btn-row, .drafts-bar{display:none !important;}
+    body{background:#fff;color:#111;}
+    .preview{border:none;box-shadow:none;background:#fff;max-height:none;overflow:visible;}
+    .preview h3{color:#111;}
+    .doc-section h4{color:#333;}
+    .doc-section p,.doc-section li{color:#111;}
+    .total-box{border-color:#333;background:#f2f2f2;}
+    .total-box .amt{color:#111;}
+    .grid{grid-template-columns:1fr !important;display:block;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>⟨ PROJECT SCOPE CREATOR ⟩</h1>
+    <p>Define deliverables, timelines & pricing before you start — protect your freelance projects from scope creep</p>
+  </header>
+
+  <div class="ad-slot">AD SLOT — TOP (728x90 / responsive)</div>
+
+  <div class="drafts-bar" id="draftsBar"></div>
+
+  <div class="grid">
+    <!-- FORM PANEL -->
+    <div class="panel">
+      <h2><span class="dot"></span> PROJECT DETAILS</h2>
+      <div class="row2">
+        <div><label>Project Name</label><input type="text" id="projectName" placeholder="e.g. E-commerce Website Redesign"></div>
+        <div><label>Client Name</label><input type="text" id="clientName" placeholder="e.g. Sharma Enterprises"></div>
+      </div>
+      <div class="row2">
+        <div><label>Your Name / Freelancer</label><input type="text" id="freelancerName" placeholder="Your name"></div>
+        <div><label>Document Date</label><input type="date" id="docDate"></div>
+      </div>
+      <label>Project Overview / Objective</label>
+      <textarea id="overview" placeholder="Briefly describe the goal of this project..."></textarea>
+
+      <h2 style="margin-top:22px;"><span class="dot"></span> DELIVERABLES</h2>
+      <div id="deliverablesList"></div>
+      <div class="btn-row"><button class="btn small" onclick="addDeliverable()">+ Add Deliverable</button></div>
+
+      <h2 style="margin-top:22px;"><span class="dot"></span> MILESTONES & TIMELINE</h2>
+      <div id="milestonesList"></div>
+      <div class="btn-row"><button class="btn small" onclick="addMilestone()">+ Add Milestone</button></div>
+
+      <h2 style="margin-top:22px;"><span class="dot"></span> SCOPE BOUNDARIES</h2>
+      <label>✅ In Scope (Included)</label>
+      <textarea id="inScope" placeholder="One item per line...&#10;e.g. 5 responsive web pages&#10;Basic SEO setup"></textarea>
+      <label>🚫 Out of Scope (Not Included)</label>
+      <textarea id="outScope" placeholder="One item per line...&#10;e.g. Content writing&#10;Third-party plugin costs"></textarea>
+
+      <h2 style="margin-top:22px;"><span class="dot"></span> PRICING & PAYMENT</h2>
+      <div class="row2">
+        <div><label>Total Project Cost (₹)</label><input type="number" id="totalCost" placeholder="e.g. 50000"></div>
+        <div><label>Advance Payment (%)</label><input type="number" id="advancePct" placeholder="e.g. 30"></div>
+      </div>
+      <label>Payment Schedule Notes</label>
+      <textarea id="paymentNotes" placeholder="e.g. 30% advance, 40% at midpoint, 30% on final delivery"></textarea>
+
+      <h2 style="margin-top:22px;"><span class="dot"></span> ADDITIONAL TERMS</h2>
+      <div class="row2">
+        <div><label>Free Revisions Included</label><input type="number" id="revisions" placeholder="e.g. 2"></div>
+        <div><label>Extra Revision Cost (₹)</label><input type="number" id="revisionCost" placeholder="e.g. 1000"></div>
+      </div>
+      <label>Cancellation / Refund Policy</label>
+      <textarea id="cancelPolicy" placeholder="e.g. Advance is non-refundable after work begins..."></textarea>
+      <label>Ownership & Copyright Terms</label>
+      <textarea id="ownership" placeholder="e.g. Full ownership transfers to client upon final payment"></textarea>
+
+      <div class="btn-row">
+        <button class="btn" onclick="generateDoc()">⚡ Generate Scope Document</button>
+        <button class="btn green" onclick="saveDraft()">💾 Save Draft</button>
+        <button class="btn ghost" onclick="clearForm()">🗑 Clear All</button>
+      </div>
+    </div>
+
+    <!-- PREVIEW PANEL -->
+    <div class="panel preview" id="previewPanel">
+      <h3 id="pvTitle">Your Scope Document Will Appear Here</h3>
+      <p class="doc-sub" id="pvSub">Fill the form and click "Generate Scope Document"</p>
+      <div id="pvContent" style="color:var(--muted);font-size:14px;">
+        Start by entering your project name and client details on the left, then add deliverables and milestones. Click Generate to build a shareable, printable scope document.
+      </div>
+      <div class="btn-row" id="pvActions" style="display:none;">
+        <button class="btn purple" onclick="copyDoc()">📋 Copy to Clipboard</button>
+        <button class="btn green" onclick="window.print()">🖨 Download / Print PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-slot">AD SLOT — MIDDLE (300x250 / responsive)</div>
+
+  <div class="hindi-guide">
+    <h2>📘 इस्तेमाल कैसे करें (How To Use — हिंदी गाइड)</h2>
+    <ol>
+      <li><b>प्रोजेक्ट डिटेल्स भरें:</b> प्रोजेक्ट का नाम, क्लाइंट का नाम, अपना नाम और तारीख डालें।</li>
+      <li><b>Overview लिखें:</b> प्रोजेक्ट का मकसद 2-3 लाइन में समझाएं ताकि क्लाइंट को साफ पता चले।</li>
+      <li><b>Deliverables जोड़ें:</b> "+ Add Deliverable" पर क्लिक करके हर काम अलग से लिस्ट करें (जैसे: होमपेज डिज़ाइन, लोगो, 5 पेज वेबसाइट)।</li>
+      <li><b>Milestones डालें:</b> काम कब-कब पूरा होगा, तारीख के साथ मील के पत्थर जोड़ें — इससे क्लाइंट को टाइमलाइन साफ दिखेगी।</li>
+      <li><b>In Scope / Out of Scope:</b> क्या शामिल है और क्या नहीं — यह लिखना बहुत ज़रूरी है, इससे बाद में झगड़ा नहीं होता (scope creep से बचाव)।</li>
+      <li><b>Pricing भरें:</b> कुल कीमत, एडवांस पेमेंट % और पेमेंट शेड्यूल लिखें (₹ में)।</li>
+      <li><b>Additional Terms:</b> कितने फ्री रिवीज़न मिलेंगे, कैंसिलेशन पॉलिसी और ओनरशिप की शर्तें लिखें।</li>
+      <li><b>Generate करें:</b> "⚡ Generate Scope Document" बटन दबाएं — दाईं तरफ पूरा प्रोफेशनल डॉक्यूमेंट बन जाएगा।</li>
+      <li><b>Save / Download:</b> "💾 Save Draft" से यह ब्राउज़र में सेव हो जाता है (दोबारा खोल सकते हैं)। "🖨 Download / Print PDF" से PDF बना सकते हैं या क्लाइंट को भेजने के लिए कॉपी कर सकते हैं।</li>
+      <li><b>क्यों ज़रूरी है:</b> Scope document भेजने से क्लाइंट के साथ शुरू से ही सब कुछ साफ रहता है — पेमेंट, डेडलाइन और काम की सीमा पर बाद में विवाद नहीं होता।</li>
+    </ol>
+  </div>
+
+  <div class="ad-slot">AD SLOT — BOTTOM (728x90 / responsive)</div>
+
+  <footer>PROJECT SCOPE CREATOR — Part of the IncomeAIHub Tool Suite · Data is saved only in your browser (LocalStorage)</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let deliverables = [];
+let milestones = [];
+let delId = 0, msId = 0;
+
+function uid(prefix){return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);}
+
+function addDeliverable(data){
+  const id = uid('d');
+  deliverables.push({id, name:data?.name||'', desc:data?.desc||'', due:data?.due||''});
+  renderDeliverables();
+}
+function removeDeliverable(id){
+  deliverables = deliverables.filter(d=>d.id!==id);
+  renderDeliverables();
+}
+function renderDeliverables(){
+  const el = document.getElementById('deliverablesList');
+  el.innerHTML = deliverables.map(d=>`
+    <div class="item-card">
+      <button class="rm" onclick="removeDeliverable('${d.id}')">✕</button>
+      <label>Deliverable Name</label>
+      <input type="text" value="${escapeHtml(d.name)}" oninput="updateDeliverable('${d.id}','name',this.value)" placeholder="e.g. Homepage Design">
+      <label>Description</label>
+      <input type="text" value="${escapeHtml(d.desc)}" oninput="updateDeliverable('${d.id}','desc',this.value)" placeholder="Short detail">
+      <label>Due Date</label>
+      <input type="date" value="${d.due}" oninput="updateDeliverable('${d.id}','due',this.value)">
+    </div>
+  `).join('') || '<p style="color:var(--muted);font-size:13px;margin-top:8px;">No deliverables added yet.</p>';
+}
+function updateDeliverable(id,key,val){
+  const d = deliverables.find(x=>x.id===id); if(d) d[key]=val;
+}
+
+function addMilestone(data){
+  const id = uid('m');
+  milestones.push({id, name:data?.name||'', date:data?.date||'', pct:data?.pct||''});
+  renderMilestones();
+}
+function removeMilestone(id){
+  milestones = milestones.filter(m=>m.id!==id);
+  renderMilestones();
+}
+function renderMilestones(){
+  const el = document.getElementById('milestonesList');
+  el.innerHTML = milestones.map(m=>`
+    <div class="item-card">
+      <button class="rm" onclick="removeMilestone('${m.id}')">✕</button>
+      <div class="row3">
+        <div><label>Milestone</label><input type="text" value="${escapeHtml(m.name)}" oninput="updateMilestone('${m.id}','name',this.value)" placeholder="e.g. Design Approval"></div>
+        <div><label>Date</label><input type="date" value="${m.date}" oninput="updateMilestone('${m.id}','date',this.value)"></div>
+        <div><label>Payment %</label><input type="number" value="${m.pct}" oninput="updateMilestone('${m.id}','pct',this.value)" placeholder="30"></div>
+        <div></div>
+      </div>
+    </div>
+  `).join('') || '<p style="color:var(--muted);font-size:13px;margin-top:8px;">No milestones added yet.</p>';
+}
+function updateMilestone(id,key,val){
+  const m = milestones.find(x=>x.id===id); if(m) m[key]=val;
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtINR(n){
+  n = parseFloat(n)||0;
+  return '₹' + n.toLocaleString('en-IN', {maximumFractionDigits:0});
+}
+function fmtDate(d){
+  if(!d) return '—';
+  const dt = new Date(d+'T00:00:00');
+  if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+}
+
+function generateDoc(){
+  const projectName = document.getElementById('projectName').value || 'Untitled Project';
+  const clientName = document.getElementById('clientName').value || '—';
+  const freelancerName = document.getElementById('freelancerName').value || '—';
+  const docDate = document.getElementById('docDate').value ? fmtDate(document.getElementById('docDate').value) : fmtDate(new Date().toISOString().slice(0,10));
+  const overview = document.getElementById('overview').value || 'No overview provided.';
+  const inScope = document.getElementById('inScope').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const outScope = document.getElementById('outScope').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const totalCost = document.getElementById('totalCost').value;
+  const advancePct = document.getElementById('advancePct').value;
+  const paymentNotes = document.getElementById('paymentNotes').value;
+  const revisions = document.getElementById('revisions').value;
+  const revisionCost = document.getElementById('revisionCost').value;
+  const cancelPolicy = document.getElementById('cancelPolicy').value;
+  const ownership = document.getElementById('ownership').value;
+
+  document.getElementById('pvTitle').textContent = projectName;
+  document.getElementById('pvSub').textContent = `Prepared for ${clientName} · by ${freelancerName} · ${docDate}`;
+
+  let html = '';
+
+  html += `<div class="doc-section"><h4>Project Overview</h4><p>${escapeHtml(overview)}</p></div>`;
+
+  html += `<div class="doc-section"><h4>Deliverables</h4>`;
+  if(deliverables.length){
+    html += `<table class="doc-table"><tr><th>Deliverable</th><th>Description</th><th>Due Date</th></tr>`;
+    deliverables.forEach(d=>{
+      html += `<tr><td>${escapeHtml(d.name)||'—'}</td><td>${escapeHtml(d.desc)||'—'}</td><td>${d.due?fmtDate(d.due):'—'}</td></tr>`;
+    });
+    html += `</table>`;
+  } else {
+    html += `<p>No deliverables specified.</p>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="doc-section"><h4>Timeline & Milestones</h4>`;
+  if(milestones.length){
+    html += `<table class="doc-table"><tr><th>Milestone</th><th>Date</th><th>Payment %</th></tr>`;
+    milestones.forEach(m=>{
+      html += `<tr><td>${escapeHtml(m.name)||'—'}</td><td>${m.date?fmtDate(m.date):'—'}</td><td>${m.pct?m.pct+'%':'—'}</td></tr>`;
+    });
+    html += `</table>`;
+  } else {
+    html += `<p>No milestones specified.</p>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="doc-section"><h4>In Scope</h4><ul>${inScope.length? inScope.map(i=>`<li>${escapeHtml(i)}</li>`).join('') : '<li>Not specified</li>'}</ul></div>`;
+  html += `<div class="doc-section"><h4>Out of Scope</h4><ul>${outScope.length? outScope.map(i=>`<li>${escapeHtml(i)}</li>`).join('') : '<li>Not specified</li>'}</ul></div>`;
+
+  html += `<div class="doc-section"><h4>Pricing & Payment Terms</h4>`;
+  if(totalCost){
+    html += `<div class="total-box"><span>Total Project Cost</span><span class="amt">${fmtINR(totalCost)}</span></div>`;
+  }
+  if(advancePct && totalCost){
+    const adv = (parseFloat(totalCost)*parseFloat(advancePct)/100).toFixed(0);
+    html += `<p style="margin-top:8px;">Advance Payment: <b>${advancePct}%</b> (${fmtINR(adv)}) due before work begins.</p>`;
+  }
+  if(paymentNotes) html += `<p style="margin-top:6px;">${escapeHtml(paymentNotes)}</p>`;
+  html += `</div>`;
+
+  html += `<div class="doc-section"><h4>Additional Terms</h4>`;
+  html += `<p><b>Revisions:</b> ${revisions||'0'} free revision(s) included`;
+  if(revisionCost) html += `; additional revisions charged at ${fmtINR(revisionCost)} each`;
+  html += `.</p>`;
+  if(cancelPolicy) html += `<p style="margin-top:6px;"><b>Cancellation Policy:</b> ${escapeHtml(cancelPolicy)}</p>`;
+  if(ownership) html += `<p style="margin-top:6px;"><b>Ownership:</b> ${escapeHtml(ownership)}</p>`;
+  html += `</div>`;
+
+  html += `<div class="doc-section" style="border-bottom:none;"><p style="font-size:12px;color:var(--muted);">This scope document was created using IncomeAIHub's Project Scope Creator. Both parties should confirm agreement before work begins.</p></div>`;
+
+  document.getElementById('pvContent').innerHTML = html;
+  document.getElementById('pvActions').style.display = 'flex';
+  showToast('Scope document generated ✓');
+}
+
+function copyDoc(){
+  const text = document.getElementById('pvTitle').textContent + '\n' +
+    document.getElementById('pvSub').textContent + '\n\n' +
+    document.getElementById('pvContent').innerText;
+  navigator.clipboard.writeText(text).then(()=>showToast('Copied to clipboard ✓'));
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function collectFormData(){
+  return {
+    projectName: document.getElementById('projectName').value,
+    clientName: document.getElementById('clientName').value,
+    freelancerName: document.getElementById('freelancerName').value,
+    docDate: document.getElementById('docDate').value,
+    overview: document.getElementById('overview').value,
+    inScope: document.getElementById('inScope').value,
+    outScope: document.getElementById('outScope').value,
+    totalCost: document.getElementById('totalCost').value,
+    advancePct: document.getElementById('advancePct').value,
+    paymentNotes: document.getElementById('paymentNotes').value,
+    revisions: document.getElementById('revisions').value,
+    revisionCost: document.getElementById('revisionCost').value,
+    cancelPolicy: document.getElementById('cancelPolicy').value,
+    ownership: document.getElementById('ownership').value,
+    deliverables, milestones
+  };
+}
+
+function applyFormData(data){
+  document.getElementById('projectName').value = data.projectName||'';
+  document.getElementById('clientName').value = data.clientName||'';
+  document.getElementById('freelancerName').value = data.freelancerName||'';
+  document.getElementById('docDate').value = data.docDate||'';
+  document.getElementById('overview').value = data.overview||'';
+  document.getElementById('inScope').value = data.inScope||'';
+  document.getElementById('outScope').value = data.outScope||'';
+  document.getElementById('totalCost').value = data.totalCost||'';
+  document.getElementById('advancePct').value = data.advancePct||'';
+  document.getElementById('paymentNotes').value = data.paymentNotes||'';
+  document.getElementById('revisions').value = data.revisions||'';
+  document.getElementById('revisionCost').value = data.revisionCost||'';
+  document.getElementById('cancelPolicy').value = data.cancelPolicy||'';
+  document.getElementById('ownership').value = data.ownership||'';
+  deliverables = data.deliverables||[];
+  milestones = data.milestones||[];
+  renderDeliverables();
+  renderMilestones();
+}
+
+function saveDraft(){
+  const data = collectFormData();
+  const name = data.projectName || ('Draft ' + new Date().toLocaleString('en-IN'));
+  let drafts = JSON.parse(localStorage.getItem('psc_drafts')||'{}');
+  const key = uid('draft');
+  drafts[key] = {name, data, saved: Date.now()};
+  localStorage.setItem('psc_drafts', JSON.stringify(drafts));
+  renderDrafts();
+  showToast('Draft saved: ' + name);
+}
+
+function renderDrafts(){
+  const drafts = JSON.parse(localStorage.getItem('psc_drafts')||'{}');
+  const bar = document.getElementById('draftsBar');
+  const keys = Object.keys(drafts);
+  if(!keys.length){ bar.innerHTML=''; return; }
+  bar.innerHTML = '<span style="color:var(--muted);font-size:12px;padding:6px 4px;">SAVED DRAFTS:</span>' + keys.map(k=>`
+    <div class="draft-chip">
+      <span onclick="loadDraft('${k}')">${escapeHtml(drafts[k].name)}</span>
+      <button onclick="deleteDraft('${k}')">✕</button>
+    </div>
+  `).join('');
+}
+function loadDraft(key){
+  const drafts = JSON.parse(localStorage.getItem('psc_drafts')||'{}');
+  if(drafts[key]){
+    applyFormData(drafts[key].data);
+    showToast('Draft loaded ✓');
+    generateDoc();
+  }
+}
+function deleteDraft(key){
+  const drafts = JSON.parse(localStorage.getItem('psc_drafts')||'{}');
+  delete drafts[key];
+  localStorage.setItem('psc_drafts', JSON.stringify(drafts));
+  renderDrafts();
+  showToast('Draft deleted');
+}
+
+function clearForm(){
+  if(!confirm('Clear all fields? This will not delete saved drafts.')) return;
+  applyFormData({});
+  document.getElementById('pvTitle').textContent = 'Your Scope Document Will Appear Here';
+  document.getElementById('pvSub').textContent = 'Fill the form and click "Generate Scope Document"';
+  document.getElementById('pvContent').innerHTML = 'Start by entering your project name and client details on the left, then add deliverables and milestones. Click Generate to build a shareable, printable scope document.';
+  document.getElementById('pvActions').style.display = 'none';
+}
+
+// init
+window.onload = function(){
+  document.getElementById('docDate').value = new Date().toISOString().slice(0,10);
+  addDeliverable();
+  addMilestone();
+  renderDrafts();
+  // autosave to a rolling "autosave" key every change
+  document.querySelector('.panel').addEventListener('input', ()=>{
+    localStorage.setItem('psc_autosave', JSON.stringify(collectFormData()));
+  });
+  const auto = localStorage.getItem('psc_autosave');
+  if(auto){
+    try{
+      const data = JSON.parse(auto);
+      if(data.projectName || data.clientName || (data.deliverables&&data.deliverables.length)){
+        applyFormData(data);
+      }
+    }catch(e){}
+  }
+};
+</script>
+</body>
+</html>
